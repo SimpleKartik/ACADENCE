@@ -1,5 +1,23 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/lib/auth/AuthContext';
+
 export default function StudentDashboardOverview() {
-  // Mock data
+  const { user, fetchUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      if (!user) {
+        await fetchUser();
+      }
+      setIsLoading(false);
+    };
+    loadUser();
+  }, [user, fetchUser]);
+
+  // Mock data (will be replaced with real API calls later)
   const attendancePercentage = 85;
   const upcomingClasses = [
     { subject: 'Mathematics', time: '10:00 AM', room: 'A-101' },
@@ -11,11 +29,24 @@ export default function StudentDashboardOverview() {
     { title: 'Library Book Return Reminder', date: '2024-01-14', read: true },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-700"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-primary-900 mb-2">Dashboard Overview</h1>
-        <p className="text-gray-600">Welcome to your academic dashboard</p>
+        <p className="text-gray-600">
+          Welcome back, {user?.name || 'Student'}! {user?.email && `(${user.email})`}
+        </p>
+        {user?.rollNumber && (
+          <p className="text-sm text-gray-500 mt-1">Roll Number: {user.rollNumber}</p>
+        )}
       </div>
 
       {/* Stats Grid */}

@@ -7,24 +7,26 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import LogoBackground from '@/components/LogoBackground';
 
 export default function AdminLoginPage() {
-  const [adminId, setAdminId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setIsLoading(true);
 
     try {
-      const success = await login(adminId, password, 'admin');
+      const success = await login(email, password, 'admin');
       if (success) {
         router.push('/dashboard/admin');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
-      alert('Login failed. Please try again.');
+      setError(error.message || 'Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -48,19 +50,24 @@ export default function AdminLoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
           <div>
-            <label htmlFor="adminId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Admin ID
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Admin Email
             </label>
             <input
-              type="text"
-              id="adminId"
-              name="adminId"
-              value={adminId}
-              onChange={(e) => setAdminId(e.target.value)}
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all duration-200 shadow-sm focus:shadow-md"
-              placeholder="ADMIN001"
+              placeholder="admin@university.edu"
             />
           </div>
 

@@ -14,10 +14,15 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children, requiredRole }: DashboardLayoutProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
+    // Don't redirect while loading
+    if (isLoading) {
+      return;
+    }
+
     if (!isAuthenticated) {
       router.push('/select-role');
       return;
@@ -27,9 +32,10 @@ export default function DashboardLayout({ children, requiredRole }: DashboardLay
       // Redirect to correct role dashboard
       router.push(`/dashboard/${user.role}`);
     }
-  }, [isAuthenticated, user, requiredRole, router]);
+  }, [isAuthenticated, user, requiredRole, router, isLoading]);
 
-  if (!isAuthenticated || !user || user.role !== requiredRole) {
+  // Show loading state while checking authentication
+  if (isLoading || !isAuthenticated || !user || user.role !== requiredRole) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background dark:bg-gray-900 transition-colors duration-200">
         <div className="text-center">

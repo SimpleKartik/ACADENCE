@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
+import NotificationBadge from '@/components/notifications/NotificationBadge';
 
 export default function TopBar() {
   const { user, logout } = useAuth();
@@ -11,6 +12,15 @@ export default function TopBar() {
   const handleLogout = () => {
     logout();
     router.push('/');
+  };
+
+  const handleNotificationClick = () => {
+    // Navigate to notifications page based on role
+    if (user?.role === 'student') {
+      router.push('/dashboard/student/announcements');
+    } else if (user?.role === 'teacher') {
+      router.push('/dashboard/teacher/broadcast');
+    }
   };
 
   return (
@@ -25,6 +35,9 @@ export default function TopBar() {
           </p>
         </div>
         <div className="flex items-center space-x-4">
+          {(user?.role === 'student' || user?.role === 'teacher') && (
+            <NotificationBadge onClick={handleNotificationClick} />
+          )}
           <ThemeToggle />
           <button
             onClick={handleLogout}

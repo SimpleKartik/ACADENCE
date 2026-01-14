@@ -5,6 +5,13 @@ const connectDB = require('./config/database');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const cabinStatusRoutes = require('./routes/cabinStatusRoutes');
+const timetableRoutes = require('./routes/timetableRoutes');
+const libraryRoutes = require('./routes/libraryRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 // Initialize Express app
@@ -39,6 +46,13 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/cabin-status', cabinStatusRoutes);
+app.use('/api/timetable', timetableRoutes);
+app.use('/api/library', libraryRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -59,6 +73,12 @@ app.listen(PORT, () => {
   console.log(`✓ Server running on port ${PORT}`);
   console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`✓ API available at http://localhost:${PORT}/api`);
+
+  // Schedule cron jobs (only in production or if enabled)
+  if (process.env.ENABLE_CRON_JOBS === 'true' || process.env.NODE_ENV === 'production') {
+    const { scheduleLibraryReminders } = require('./utils/cronJobs');
+    scheduleLibraryReminders();
+  }
 });
 
 module.exports = app;
