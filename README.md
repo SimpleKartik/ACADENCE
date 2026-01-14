@@ -102,4 +102,19 @@ Built with **real-world use cases** in mind, ACADENCE combines automation, analy
 ---
 
 ## 🏗️ Project Architecture
-
+ACADENCE/
+│
+├── backend/
+│ ├── controllers/
+│ ├── models/
+│ ├── routes/
+│ ├── middleware/
+│ └── utils/
+│
+├── frontend/
+│ ├── components/
+│ ├── pages/
+│ ├── services/
+│ └── context/
+│
+└── README.md
